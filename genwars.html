@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generous Wars</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      overflow: hidden;
+    }
+    .transition-width {
+      transition: width 1s ease-in-out;
+    }
+    .flag-container {
+      position: relative;
+      display: flex;
+      height: 160px;
+      width: 100%;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      border: 2px solid #ccc;
+    }
+    .flag-image {
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    }
+    .flag-left {
+      left: 0;
+    }
+    .flag-right {
+      right: 0;
+    }
+    @keyframes float {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      to {
+        transform: translateY(-500px) scale(1.3);
+        opacity: 0;
+      }
+    }
+    .floating-reaction {
+      position: fixed;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      opacity: 0;
+      animation: float 3s ease-out forwards;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans flex items-center justify-center min-h-screen px-4">
+
+  <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md text-center">
+    <h1 class="text-3xl font-bold mb-2">🌍 The Generous Wars</h1>
+    <p class="text-sm text-gray-600 mb-6">Support your nation and prove its generosity!</p>
+
+    <div class="flag-container mb-6" id="currentBattle">
+      <img src="https://flagcdn.com/w320/us.png" id="leftFlag" class="flag-image flag-left transition-width" style="width: 50%;">
+      <img src="https://flagcdn.com/w320/cn.png" id="rightFlag" class="flag-image flag-right transition-width" style="width: 50%;">
+    </div>
+
+    <div class="text-sm text-gray-700 font-semibold mb-6">
+      <span id="leftText">USA 50%</span> | <span id="rightText">China 50%</span>
+    </div>
+
+    <div class="flex justify-between gap-4 mb-6">
+      <button onclick="donate('left')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl w-full">Support Left</button>
+      <button onclick="donate('right')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl w-full">Support Right</button>
+    </div>
+
+    <p class="mt-6 text-xs text-gray-500 italic">This is a public ego experiment. Donations are symbolic and non-refundable.</p>
+
+    <div class="mt-4 mb-4">
+      <a href="https://paypal.me/yourlink" target="_blank" class="text-blue-600 hover:underline">Donate via PayPal</a>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="flex flex-col gap-2">
+      <button onclick="changeBattle('USA-China')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">USA vs China</button>
+      <button onclick="changeBattle('Pakistan-India')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Pakistan vs India</button>
+      <button onclick="changeBattle('Ukraine-Russia')" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-xl">Ukraine vs Russia</button>
+    </div>
+  </div>
+
+  <script>
+    let battles = {
+      'USA-China': { left: 50, right: 50, leftImage: 'us.png', rightImage: 'cn.png', leftFlag: 'us', rightFlag: 'cn' },
+      'Pakistan-India': { left: 50, right: 50, leftImage: 'pk.png', rightImage: 'in.png', leftFlag: 'pk', rightFlag: 'in' },
+      'Ukraine-Russia': { left: 50, right: 50, leftImage: 'ua.png', rightImage: 'ru.png', leftFlag: 'ua', rightFlag: 'ru' }
+    };
+
+    let currentBattle = 'USA-China';
+
+    function donate(side) {
+      battles[currentBattle][side]++;
+      createFloatingReaction(side);
+      updateUI();
+    }
+
+    function changeBattle(battle) {
+      currentBattle = battle;
+      updateUI();
+    }
+
+    function updateUI() {
+      const leftFlag = document.getElementById('leftFlag');
+      const rightFlag = document.getElementById('rightFlag');
+      const leftText = document.getElementById('leftText');
+      const rightText = document.getElementById('rightText');
+
+      const battleData = battles[currentBattle];
+      const total = battleData.left + battleData.right;
+      const leftPercent = Math.round((battleData.left / total) * 100);
+      const rightPercent = 100 - leftPercent;
+
+      leftFlag.src = `https://flagcdn.com/w320/${battleData.leftImage}`;
+      rightFlag.src = `https://flagcdn.com/w320/${battleData.rightImage}`;
+
+      leftFlag.style.width = leftPercent + '%';
+      rightFlag.style.width = rightPercent + '%';
+
+      leftText.textContent = `Left ${leftPercent}%`;
+      rightText.textContent = `Right ${rightPercent}%`;
+    }
+
+    function createFloatingReaction(side) {
+      const battleData = battles[currentBattle];
+      const imgSrc = side === 'left' ? battleData.leftFlag : battleData.rightFlag;
+
+      const floatingReaction = document.createElement('img');
+      floatingReaction.src = `https://flagcdn.com/w40/${imgSrc}.png`;
+      floatingReaction.classList.add('floating-reaction');
+
+      const startX = Math.random() * window.innerWidth;
+      const startY = window.innerHeight;
+      floatingReaction.style.left = startX + 'px';
+      floatingReaction.style.top = startY + 'px';
+
+      document.body.appendChild(floatingReaction);
+      setTimeout(() => {
+        document.body.removeChild(floatingReaction);
+      }, 3000);
+    }
+
+    updateUI();
+  </script>
+
+</body>
+</html>
