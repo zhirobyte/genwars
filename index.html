@@ -69,7 +69,7 @@
     </div>
 
     <div class="text-sm text-gray-700 font-semibold mb-6">
-      <span id="leftText">USA - $0</span> | <span id="rightText">China - $0</span>
+      <span id="leftText">Left - $0</span> | <span id="rightText">Right - $0</span>
     </div>
 
     <div class="flex justify-between gap-4 mb-6">
@@ -80,15 +80,17 @@
     <p class="mt-6 text-xs text-gray-500 italic">This is a public ego experiment. Donations are symbolic and non-refundable.</p>
 
     <div class="mt-4 mb-4">
-      <a href="https://paypal.me/yourlink" target="_blank" class="text-blue-600 hover:underline">Donate via PayPal</a>
+      <a href="https://www.paypal.com/paypalme/zhirone?country.x=ID&locale.x=en_US" target="_blank" class="text-blue-600 hover:underline">Donate via PayPal.me</a>
     </div>
 
     <hr class="my-4">
 
     <div class="flex flex-col gap-2">
       <button onclick="changeBattle('USA-China')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl">USA vs China</button>
-      <button onclick="changeBattle('Pakistan-India')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Pakistan vs India</button>
-      <button onclick="changeBattle('Ukraine-Russia')" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-xl">Ukraine vs Russia</button>
+      <button onclick="changeBattle('Pokemon-Fire-Water')" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl">Pokemon Fire vs Water</button>
+      <button onclick="changeBattle('Marvel-DC')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl">Marvel vs DC</button>
+      <button onclick="changeBattle('Dragons-Phoenixes')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl">Dragons vs Phoenixes</button>
+      <button onclick="changeBattle('Elves-Dwarves')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Elves vs Dwarves</button>
     </div>
 
     <p id="winner" class="mt-6 text-lg font-bold text-green-600"></p>
@@ -97,8 +99,10 @@
   <script>
     let battles = {
       'USA-China': { left: 0, right: 0, target: 50000, leftImage: 'us.png', rightImage: 'cn.png', leftFlag: 'us', rightFlag: 'cn' },
-      'Pakistan-India': { left: 0, right: 0, target: 50000, leftImage: 'pk.png', rightImage: 'in.png', leftFlag: 'pk', rightFlag: 'in' },
-      'Ukraine-Russia': { left: 0, right: 0, target: 50000, leftImage: 'ua.png', rightImage: 'ru.png', leftFlag: 'ua', rightFlag: 'ru' }
+      'Pokemon-Fire-Water': { left: 0, right: 0, target: 50000, leftImage: 'pokemon-fire.png', rightImage: 'pokemon-water.png', leftFlag: 'fire', rightFlag: 'water' },
+      'Marvel-DC': { left: 0, right: 0, target: 50000, leftImage: 'marvel.png', rightImage: 'dc.png', leftFlag: 'marvel', rightFlag: 'dc' },
+      'Dragons-Phoenixes': { left: 0, right: 0, target: 50000, leftImage: 'dragon.png', rightImage: 'phoenix.png', leftFlag: 'dragon', rightFlag: 'phoenix' },
+      'Elves-Dwarves': { left: 0, right: 0, target: 50000, leftImage: 'elf.png', rightImage: 'dwarf.png', leftFlag: 'elf', rightFlag: 'dwarf' }
     };
 
     let currentBattle = 'USA-China';
@@ -127,8 +131,8 @@
       const leftPercent = Math.round((battleData.left / battleData.target) * 100);
       const rightPercent = Math.round((battleData.right / battleData.target) * 100);
 
-      leftFlag.src = `https://flagcdn.com/w320/${battleData.leftImage}`;
-      rightFlag.src = `https://flagcdn.com/w320/${battleData.rightImage}`;
+      leftFlag.src = `https://your-image-source/${battleData.leftImage}`;
+      rightFlag.src = `https://your-image-source/${battleData.rightImage}`;
 
       leftFlag.style.width = (battleData.left / battleData.target * 100) + '%';
       rightFlag.style.width = (battleData.right / battleData.target * 100) + '%';
@@ -142,7 +146,7 @@
       const imgSrc = side === 'left' ? battleData.leftFlag : battleData.rightFlag;
 
       const floatingReaction = document.createElement('img');
-      floatingReaction.src = `https://flagcdn.com/w40/${imgSrc}.png`;
+      floatingReaction.src = `https://your-image-source/${imgSrc}.png`; // Update with correct URL path
       floatingReaction.classList.add('floating-reaction');
 
       const startX = Math.random() * window.innerWidth;
