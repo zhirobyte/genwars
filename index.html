@@ -69,12 +69,12 @@
     </div>
 
     <div class="text-sm text-gray-700 font-semibold mb-6">
-      <span id="leftText">USA 50%</span> | <span id="rightText">China 50%</span>
+      <span id="leftText">USA - $0</span> | <span id="rightText">China - $0</span>
     </div>
 
     <div class="flex justify-between gap-4 mb-6">
-      <button onclick="donate('left')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl w-full">Support Left</button>
-      <button onclick="donate('right')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl w-full">Support Right</button>
+      <button onclick="donate('left', 500)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl w-full">Support Left</button>
+      <button onclick="donate('right', 500)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl w-full">Support Right</button>
     </div>
 
     <p class="mt-6 text-xs text-gray-500 italic">This is a public ego experiment. Donations are symbolic and non-refundable.</p>
@@ -90,47 +90,51 @@
       <button onclick="changeBattle('Pakistan-India')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">Pakistan vs India</button>
       <button onclick="changeBattle('Ukraine-Russia')" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-xl">Ukraine vs Russia</button>
     </div>
+
+    <p id="winner" class="mt-6 text-lg font-bold text-green-600"></p>
   </div>
 
   <script>
     let battles = {
-      'USA-China': { left: 50, right: 50, leftImage: 'us.png', rightImage: 'cn.png', leftFlag: 'us', rightFlag: 'cn' },
-      'Pakistan-India': { left: 50, right: 50, leftImage: 'pk.png', rightImage: 'in.png', leftFlag: 'pk', rightFlag: 'in' },
-      'Ukraine-Russia': { left: 50, right: 50, leftImage: 'ua.png', rightImage: 'ru.png', leftFlag: 'ua', rightFlag: 'ru' }
+      'USA-China': { left: 0, right: 0, target: 50000, leftImage: 'us.png', rightImage: 'cn.png', leftFlag: 'us', rightFlag: 'cn' },
+      'Pakistan-India': { left: 0, right: 0, target: 50000, leftImage: 'pk.png', rightImage: 'in.png', leftFlag: 'pk', rightFlag: 'in' },
+      'Ukraine-Russia': { left: 0, right: 0, target: 50000, leftImage: 'ua.png', rightImage: 'ru.png', leftFlag: 'ua', rightFlag: 'ru' }
     };
 
     let currentBattle = 'USA-China';
 
-    function donate(side) {
-      battles[currentBattle][side]++;
+    function donate(side, amount) {
+      const battleData = battles[currentBattle];
+      battleData[side] += amount;
       createFloatingReaction(side);
       updateUI();
+      checkWinner();
     }
 
     function changeBattle(battle) {
       currentBattle = battle;
+      document.getElementById('winner').textContent = ""; // Clear winner message when battle changes
       updateUI();
     }
 
     function updateUI() {
+      const battleData = battles[currentBattle];
       const leftFlag = document.getElementById('leftFlag');
       const rightFlag = document.getElementById('rightFlag');
       const leftText = document.getElementById('leftText');
       const rightText = document.getElementById('rightText');
 
-      const battleData = battles[currentBattle];
-      const total = battleData.left + battleData.right;
-      const leftPercent = Math.round((battleData.left / total) * 100);
-      const rightPercent = 100 - leftPercent;
+      const leftPercent = Math.round((battleData.left / battleData.target) * 100);
+      const rightPercent = Math.round((battleData.right / battleData.target) * 100);
 
       leftFlag.src = `https://flagcdn.com/w320/${battleData.leftImage}`;
       rightFlag.src = `https://flagcdn.com/w320/${battleData.rightImage}`;
 
-      leftFlag.style.width = leftPercent + '%';
-      rightFlag.style.width = rightPercent + '%';
+      leftFlag.style.width = (battleData.left / battleData.target * 100) + '%';
+      rightFlag.style.width = (battleData.right / battleData.target * 100) + '%';
 
-      leftText.textContent = `Left ${leftPercent}%`;
-      rightText.textContent = `Right ${rightPercent}%`;
+      leftText.textContent = `Left - $${battleData.left} (${leftPercent}%)`;
+      rightText.textContent = `Right - $${battleData.right} (${rightPercent}%)`;
     }
 
     function createFloatingReaction(side) {
@@ -150,6 +154,23 @@
       setTimeout(() => {
         document.body.removeChild(floatingReaction);
       }, 3000);
+    }
+
+    function checkWinner() {
+      const battleData = battles[currentBattle];
+      const winnerText = document.getElementById('winner');
+      
+      if (battleData.left >= battleData.target) {
+        winnerText.textContent = "Left side wins!";
+        return true;
+      }
+
+      if (battleData.right >= battleData.target) {
+        winnerText.textContent = "Right side wins!";
+        return true;
+      }
+
+      return false;
     }
 
     updateUI();
